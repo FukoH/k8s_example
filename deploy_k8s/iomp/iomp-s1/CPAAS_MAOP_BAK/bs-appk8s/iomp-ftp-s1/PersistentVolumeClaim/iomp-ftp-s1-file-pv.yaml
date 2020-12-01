@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    finalizers:
+        - kubernetes.io/pvc-protection
+    labels:
+        cpaasAutoDeploy: "10"
+    name: iomp-ftp-s1-file-pv
+    namespace: iomp-ftp-s1
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 30G
+    storageClassName: ""
+    volumeMode: Filesystem
+    volumeName: iomp-ftp-s1-file-pv

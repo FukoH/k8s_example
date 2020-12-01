@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: ftp-ui.iomp-ftp-d
+        cpaasAutoDeploy: "10"
+    name: ftp-ui-ftp-ui
+    namespace: iomp-ftp-d
+spec:
+    ports:
+        - name: tcp-8081-8081
+          port: 8081
+          protocol: TCP
+          targetPort: 8081
+        - name: tcp-9913-9913
+          port: 9913
+          protocol: TCP
+          targetPort: 9913
+    selector:
+        service.cpaas.io/name: deployment-ftp-ui-ftp-ui
+    sessionAffinity: None
+    type: ClusterIP

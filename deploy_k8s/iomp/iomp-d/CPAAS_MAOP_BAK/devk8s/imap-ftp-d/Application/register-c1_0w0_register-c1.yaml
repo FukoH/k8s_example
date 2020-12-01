@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: register-c1.iomp-ftp-d
+        cpaasAutoDeploy: "10"
+    name: register-c1-d-consul
+    namespace: iomp-ftp-d
+spec:
+    clusterIP: None
+    ports:
+        - name: tcp-8300-8300
+          port: 8300
+          protocol: TCP
+          targetPort: 8300
+        - name: tcp-8301-8301
+          port: 8301
+          protocol: TCP
+          targetPort: 8301
+        - name: tcp-8302-8302
+          port: 8302
+          protocol: TCP
+          targetPort: 8302
+        - name: tcp-8500-8500
+          port: 8500
+          protocol: TCP
+          targetPort: 8500
+        - name: tcp-8501-8501
+          port: 8501
+          protocol: TCP
+          targetPort: 8501
+        - name: tcp-8502-8502
+          port: 8502
+          protocol: TCP
+          targetPort: 8502
+        - name: tcp-8600-8600
+          port: 8600
+          protocol: TCP
+          targetPort: 8600
+    selector:
+        service.cpaas.io/name: statefulset-register-c1-d-consul
+    sessionAffinity: None
+    type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "0"
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: register-c1.iomp-ftp-d
+        cpaasAutoDeploy: "10"
+    name: register-c1-d-consul
+    namespace: iomp-ftp-d
+spec:
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: statefulset-register-c1-d-consul
+    serviceName: register-c1-d-consul
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00297
+            labels:
+                app: statefulset-register-c1-d-consul
+                app.cpaas.io/name: register-c1.iomp-ftp-d
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: statefulset-register-c1-d-consul
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: CONSUL_START_MODEL
+                      value: s
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: register-c2-d-consul register-c3-d-consul
+                  image: harbor.td.io/common-d/d-consul:20200721_01
+                  imagePullPolicy: IfNotPresent
+                  name: d-consul
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                    - mountPath: /consul/datacenter
+                      name: consul-volume
+                      subPath: c1-datadir
+                    - mountPath: /consul/log
+                      name: consul-volume
+                      subPath: c1-log
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+                - name: consul-volume
+                  persistentVolumeClaim:
+                    claimName: iomp-ftp-d-consul-pvc
+    updateStrategy:
+        rollingUpdate:
+            partition: 0
+        type: RollingUpdate

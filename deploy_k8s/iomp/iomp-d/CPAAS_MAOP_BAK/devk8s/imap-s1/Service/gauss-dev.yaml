@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: gauss-dev.iomp-s1
+        cpaasAutoDeploy: "10"
+    name: gauss-dev
+    namespace: iomp-s1
+spec:
+    clusterIP: None
+    ports:
+        - name: 25308-25308
+          port: 25308
+          protocol: TCP
+          targetPort: 25308
+    sessionAffinity: None
+    type: ClusterIP

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    finalizers:
+        - kubernetes.io/pvc-protection
+    labels:
+        cpaasAutoDeploy: "10"
+    name: file-volume
+    namespace: iomp-s1
+spec:
+    accessModes:
+        - ReadWriteMany
+    resources:
+        requests:
+            storage: 2G
+    storageClassName: ""
+    volumeMode: Filesystem
+    volumeName: iomp-pa-s1-file-pv

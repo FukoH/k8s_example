@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "0"
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: ftp-gateway.iomp-ftp-s1
+        cpaasAutoDeploy: "10"
+    name: ftp-gateway-ftp-gateway
+    namespace: iomp-ftp-s1
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-ftp-gateway-ftp-gateway
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00297
+            labels:
+                app: deployment-ftp-gateway-ftp-gateway
+                app.cpaas.io/name: ftp-gateway.iomp-ftp-s1
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-ftp-gateway-ftp-gateway
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                  image: harbor.ms.io/iomp-s1/ftp-gateway:20201105_02
+                  imagePullPolicy: IfNotPresent
+                  name: ftp-gateway
+                  resources:
+                    limits:
+                        cpu: "4"
+                        memory: 4Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                    - mountPath: /opt/tsf/app_config/application.yml
+                      name: gateway-volume
+                      subPath: application.yml
+                    - mountPath: /imap/imap/jarweb/wlslogs/
+                      name: file-volume
+                      subPath: imap/imap/jarweb/wlslogs/gateway
+                - env:
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: bs-register-c1-s1-consul bs-register-c2-s1-consul bs-register-c3-s1-consul
+                  image: harbor.ms.io/common-s1/s1-consul:20200831_01
+                  imagePullPolicy: IfNotPresent
+                  livenessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /health/check
+                        port: 19090
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  name: s1-consul
+                  readinessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /health/check
+                        port: 19090
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  resources:
+                    limits:
+                        cpu: 500m
+                        memory: 512Mi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+                - configMap:
+                    defaultMode: 420
+                    name: gateway-application
+                  name: gateway-volume
+                - name: file-volume
+                  persistentVolumeClaim:
+                    claimName: iomp-ftp-s1-file-pv
+---
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: ftp-gateway.iomp-ftp-s1
+        cpaasAutoDeploy: "10"
+    name: poin-gateway
+    namespace: iomp-ftp-s1
+spec:
+    ports:
+        - name: tcp-8300-8300
+          port: 8300
+          protocol: TCP
+          targetPort: 8300
+        - name: tcp-8301-8301
+          port: 8301
+          protocol: TCP
+          targetPort: 8301
+        - name: tcp-8302-8302
+          port: 8302
+          protocol: TCP
+          targetPort: 8302
+        - name: tcp-8500-8500
+          port: 8500
+          protocol: TCP
+          targetPort: 8500
+        - name: tcp-8501-8501
+          port: 8501
+          protocol: TCP
+          targetPort: 8501
+        - name: tcp-8502-8502
+          port: 8502
+          protocol: TCP
+          targetPort: 8502
+        - name: tcp-8600-8600
+          port: 8600
+          protocol: TCP
+          targetPort: 8600
+        - name: tcp-19090-19090
+          port: 19090
+          protocol: TCP
+          targetPort: 19090
+        - name: tcp-10007-10007
+          port: 10007
+          protocol: TCP
+          targetPort: 10007
+        - name: tcp-10008-10008
+          port: 10008
+          protocol: TCP
+          targetPort: 10008
+    selector:
+        service.cpaas.io/name: deployment-ftp-gateway-ftp-gateway
+    sessionAffinity: None
+    type: ClusterIP

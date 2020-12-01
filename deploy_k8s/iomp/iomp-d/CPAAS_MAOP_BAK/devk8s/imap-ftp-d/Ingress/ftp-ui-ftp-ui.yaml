@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    annotations:
+        cpaas.io/creator: k00297
+        kubernetes.io/ingress.class: ""
+        ncp/internal_ip_for_policy: 100.64.145.41
+        ncp/use-regex: "true"
+    labels:
+        app.cpaas.io/name: ftp-ui.iomp-ftp-d
+        cpaasAutoDeploy: "10"
+    name: ftp-ui-ftp-ui
+    namespace: iomp-ftp-d
+spec:
+    rules:
+        - host: iomp-ftp.acp.td.io
+          http:
+            paths:
+                - backend:
+                    serviceName: ftp-ui-ftp-ui
+                    servicePort: 8081
+                  path: /.*

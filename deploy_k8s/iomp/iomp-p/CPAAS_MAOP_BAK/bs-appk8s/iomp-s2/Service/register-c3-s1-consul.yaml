@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: register-c3.iomp-s2
+        cpaasAutoDeploy: "10"
+    name: register-c3-s2-consul
+    namespace: iomp-s2
+spec:
+    clusterIP: None
+    ports:
+        - name: tcp-8300-8300
+          port: 8300
+          protocol: TCP
+          targetPort: 8300
+        - name: tcp-8301-8301
+          port: 8301
+          protocol: TCP
+          targetPort: 8301
+        - name: tcp-8302-8302
+          port: 8302
+          protocol: TCP
+          targetPort: 8302
+        - name: tcp-8500-8500
+          port: 8500
+          protocol: TCP
+          targetPort: 8500
+        - name: tcp-8501-8501
+          port: 8501
+          protocol: TCP
+          targetPort: 8501
+        - name: tcp-8502-8502
+          port: 8502
+          protocol: TCP
+          targetPort: 8502
+        - name: tcp-8600-8600
+          port: 8600
+          protocol: TCP
+          targetPort: 8600
+    selector:
+        service.cpaas.io/name: statefulset-register-c3-s2-consul
+    sessionAffinity: None
+    type: ClusterIP

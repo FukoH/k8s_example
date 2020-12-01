@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Endpoints
+metadata:
+    labels:
+        app.cpaas.io/name: gauss-dev.iomp-d
+        cpaasAutoDeploy: "10"
+    name: gauss-dev
+    namespace: iomp-d
+subsets:
+    - addresses:
+        - ip: 10.200.32.3
+      ports:
+        - port: 25308
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: gauss-dev.iomp-d
+        cpaasAutoDeploy: "10"
+    name: gauss-dev
+    namespace: iomp-d
+spec:
+    clusterIP: None
+    ports:
+        - name: 25308-25308
+          port: 25308
+          protocol: TCP
+          targetPort: 25308
+    sessionAffinity: None
+    type: ClusterIP

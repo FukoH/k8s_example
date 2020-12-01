@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "0"
+        cpaas.io/creator: k00395
+    labels:
+        BUILD_ID: "10"
+        JOB_BASE_NAME: iomp-gateway-deploy-test
+        app.cpaas.io/name: poin-gateway.iomp-t
+        cpaasAutoDeploy: "10"
+    name: poin-gateway-iomp-t-gateway
+    namespace: iomp-t
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-poin-gateway-iomp-t-gateway
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00395
+            labels:
+                BUILD_ID: "10"
+                JOB_BASE_NAME: iomp-gateway-deploy-test
+                app: deployment-poin-gateway-iomp-t-gateway
+                app.cpaas.io/name: poin-gateway.iomp-t
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-poin-gateway-iomp-t-gateway
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                    - name: ACTIVE_PROFILES
+                      value: test
+                  image: harbor.td.io/iomp-t/iomp-t-gateway:latest
+                  imagePullPolicy: Always
+                  name: iomp-t-gateway
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                - env:
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: register-c1-t-consul register-c2-t-consul register-c3-t-consul
+                  image: harbor.td.io/common-t/t-consul:20200721_01
+                  imagePullPolicy: IfNotPresent
+                  name: t-consul
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 1Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+                - name: dockercfg--iomp--iomp-harbor-devops-copy
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30

@@ -1,0 +1,303 @@
+pipeline{
+
+	
+
+	agent {label "java"}
+	environment{
+			ALAUDA_PROJECT = "iomp"
+	}
+    options{
+        buildDiscarder(logRotator(numToKeepStr: '200'))
+	}
+
+	stages{
+		stage("clone"){
+
+	
+	steps{
+		script {
+  def codeRepository = "http://cebcms.cebbank.com:13020/IOMP/IOMP_PACode_Analysis.git"
+  def credential_id = ""
+  env.CODE_REPO = codeRepository
+  try {
+    alaudaDevops.withCluster(){
+      alaudaDevops.withProject(alaudaContext.getNamespace()){
+        def coderepo = alaudaDevops.selector("coderepository", "gitee-td-IOMP-IOMP_PACode_Analysis").object()
+        if(coderepo) {
+          credential_id = coderepo.metadata.annotations.secretNamespace + '-' + coderepo.metadata.annotations.secretName
+        }
+      }
+    }
+  } catch(err) {
+    echo err.getMessage()
+  }
+  if ( credential_id == "") {
+    credential_id = "iomp-mazihui-gitee"
+  }
+
+  env.CREDENTIAL_ID = credential_id
+  def relativeDirectory = "."
+  env.RELATIVE_DIRECTORY = relativeDirectory
+
+  def branchFromInput = "develop"
+
+  if("".equals(branchFromInput)){
+    branchFromInput = "master"
+  }
+
+  env.BRANCH = branchFromInput
+
+  def scmVars = checkout([
+    $class: 'GitSCM',
+    branches: [[name: branchFromInput]],
+    extensions: [[
+      $class: 'SubmoduleOption',
+      recursiveSubmodules: true,
+      parentCredentials: true,
+      reference: '',
+    ],[
+      $class: 'RelativeTargetDirectory',
+      relativeTargetDir: relativeDirectory
+    ]],
+    userRemoteConfigs: [[
+      credentialsId: credential_id,
+      url: codeRepository
+    ]]
+  ])
+
+  env.GIT_COMMIT = scmVars.GIT_COMMIT
+  env.GIT_BRANCH = scmVars.GIT_BRANCH
+  env.GIT_BRANCH_AS_TAG = scmVars.GIT_BRANCH.replaceFirst("origin/","").replaceAll("/","-")
+  alaudaPipeline.appendInfo(STAGE_NAME, [commit_id: scmVars.GIT_COMMIT, branch: scmVars.GIT_BRANCH, repo_url: codeRepository as String], '_Clone')
+
+  
+  env.TIMESTAMP = new Date().format("yyyyMMddHHmmss")
+}
+}
+}
+stage("maven"){
+
+	
+	steps{
+		script {
+try{
+  container('java'){
+    sh """
+      mvn -s "Settings.xml" clean package -Dmaven.test.skip=true
+    """
+  }
+}catch(Exception e){
+    throw e
+}finally{
+}
+
+}
+}
+}
+stage("build-docker"){
+
+	
+	steps{
+		script {
+    def retryCount = 3
+    def repositoryAddr = 'harbor.td.io/iomp-d/iomp-d-analysis'.replace("http://","").replace("https://","")
+    env.IMAGE_REPO = repositoryAddr
+
+    def credentialId = ''
+    credentialId = "iomp-dockercfg--iomp--iomp-harbor"
+    dir(RELATIVE_DIRECTORY) {
+        container('tools'){
+            retry(retryCount) {
+                try{
+                    if (credentialId != '') {
+                      withCredentials([usernamePassword(credentialsId: "${credentialId}", passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
+                        sh "docker login ${IMAGE_REPO} -u ${USER} -p ${PASSWD}"
+                        }
+                      }
+                    }
+                catch(err){
+                    echo err.getMessage()
+                    alaudaDevops.withCluster() {
+                          def secretNamespace = "iomp"
+                          def secretName = "dockercfg--iomp--iomp-harbor"
+                          def secret = alaudaDevops.selector( "secret/${secretName}" )
+                          alaudaDevops.withProject( "${secretNamespace}" ) {
+                              def secretjson = secret.object().data['.dockerconfigjson']
+                              def dockerconfigjson = base64Decode("${secretjson}");
+                              writeFile file: 'config.json', text: dockerconfigjson
+                              sh """
+                                set +x
+                                mkdir -p ~/.docker
+                                mv -f config.json ~/.docker/config.json
+                              """
+                          }
+                      }
+                }
+                def buildImages = []
+                  def tagswithcomma = "latest"
+                  def tags = tagswithcomma.split(",")
+                  def incubatorimage = "${IMAGE_REPO}:${tags[0]}"
+                  sh " docker build -t ${incubatorimage} -f Dockerfile  ."
+                  tags.each { tag ->
+                    sh """
+                        docker tag ${incubatorimage} ${IMAGE_REPO}:${tag}
+                        docker push ${IMAGE_REPO}:${tag}
+                    """
+                    buildImages.add("${IMAGE_REPO}:${tag}" as String)
+                  }
+                alaudaPipeline.appendInfo(STAGE_NAME, [build_image: buildImages], '_Docker')
+                if (credentialId != '') {
+                    sh "docker logout ${IMAGE_REPO}"
+                }
+            }
+        }
+    }
+}
+}
+}
+stage("deployService"){
+
+	
+	steps{
+		script{
+    env.CREDENTIAL_ID = ""
+    def credentialCopy
+    def newImage = [:]
+    def containerName = ""
+    def pipelineName = ''
+    newImage['name'] = "harbor.td.io/iomp-d/iomp-d-analysis"
+      def tagwithcomma = "latest"
+      def tags = tagwithcomma.split(",")
+      newImage['tag'] = "${tags[0]}"
+    env.NEW_IMAGE = "${newImage.name}:${newImage.tag}"
+      env.CREDENTIAL_ID = "iomp-dockercfg--iomp--iomp-harbor"
+      
+      env.CREDENTIAL_ID = env.CREDENTIAL_ID.replaceFirst("iomp-","")
+      try{
+          credentialCopy = alaudaDevops.withCluster(){
+            alaudaDevops.withProject("iomp") {
+            alaudaDevops.selector('secret', env.CREDENTIAL_ID).object()
+          }
+        }
+        credentialCopy.namespace = "iomp"
+        credentialCopy.name = env.CREDENTIAL_ID
+      } catch(err) {
+        error err.getMessage()
+      }
+      
+    def shouldUpdate = true
+    if(credentialCopy != null){
+        def clusterCrendential
+        try{
+            clusterCrendential = alaudaDevops.selector("secret", env.CREDENTIAL_ID).object()
+        } catch(err) {
+            echo err.getMessage()
+        }
+        /* same namespace same resourceVersion */
+        if (clusterCrendential != null && credentialCopy.namespace == "iomp-d" && clusterCrendential.metadata.resourceVersion==credentialCopy.metadata.resourceVersion) {
+            shouldUpdate = false
+        }
+
+        if (shouldUpdate) {
+            credentialCopy.name = credentialCopy.name + "-devops-copy"
+            credentialCopy.namespace="iomp-d"
+            credentialCopy.metadata.name=credentialCopy.name
+            credentialCopy.metadata.namespace=credentialCopy.namespace
+            credentialCopy.metadata.remove("resourceVersion")
+            credentialCopy.metadata.remove("creationTimestamp")
+            credentialCopy.metadata.remove("selfLink")
+            credentialCopy.metadata.remove("uid")
+        }
+    }
+    containerName = "iomp-d-analysis"
+    container('tools') {
+        // resource selector object after deployed
+        def deployedSelector = null
+        timeout(time:300, unit: "SECONDS"){
+        try {
+          alaudaDevops.withCluster("devk8s"){
+              alaudaDevops.withProject("iomp-d") {
+                 
+                 def p = alaudaDevops.selector('deployment', 'analysis-iomp-d-analysis').object()
+                 p.metadata.labels['BUILD_ID']=env.BUILD_ID
+                 p.metadata.labels['JOB_BASE_NAME']=env.JOB_BASE_NAME
+
+                 for(container in p.spec.template.spec.containers) {
+                    if(container.name == "iomp-d-analysis"){
+                        container.image = "${NEW_IMAGE}"
+                        def cmd = ""
+                        def args = ""
+
+                        if(cmd!=""){
+                        container.command = [cmd]
+                        }
+                        if(args!=""){
+                        container.args = [args]
+                        }
+                        break
+                    }
+                 }
+
+                 if(credentialCopy != null) {
+                      if(p.spec.template.spec.imagePullSecrets != null) {
+                          def notFound = true
+                          for(secret in p.spec.template.spec.imagePullSecrets) {
+                              if(secret == credentialCopy.name){
+                                  notFound = false
+                                  break
+                              }
+                          }
+                          if(notFound) {
+                              p.spec.template.spec.imagePullSecrets[p.spec.template.spec.imagePullSecrets.size()] = [name: credentialCopy.name]
+                          }
+                      }else{
+                          p.spec.template.spec.imagePullSecrets = [[name: credentialCopy.name]]
+                      }
+                 }
+
+                 p.spec.template.metadata.labels['BUILD_ID']=env.BUILD_ID
+                 p.spec.template.metadata.labels['JOB_BASE_NAME']=env.JOB_BASE_NAME
+                  if(credentialCopy != null && shouldUpdate) {
+                    alaudaDevops.apply(credentialCopy, "--validate=false")
+                  }
+                 alaudaDevops.apply(p, "--validate=false")
+                 deployedSelector = alaudaDevops.selector('deployment', 'analysis-iomp-d-analysis')
+                 // block until success or timeout
+                 deployedSelector.rollout().status()
+             }
+          }
+        } catch(err) {
+          // roll back application if it has been deployed
+          if(deployedSelector != null) {
+              echo "### Deploy application success, but container got error, starting rollback now ###"
+              alaudaDevops.withCluster("devk8s"){
+                alaudaDevops.withProject("iomp-d"){
+                    deployedSelector.rollout().undo()
+                    // special extra logic for StatefulSet
+                    // due to https://github.com/kubernetes/kubernetes/issues/67250
+                    def object = deployedSelector.object()
+                    if(object.kind == 'StatefulSet') {
+                        def oldReplicas = object.spec.replicas
+                        deployedSelector.scale("--replicas=0")
+                        deployedSelector.scale("""--replicas=${oldReplicas}""")
+                    }
+                }
+              }
+              echo "### Application rollback done ###"
+          }
+          error err.getMessage()
+        }
+      }
+    }
+
+    def svcName = "analysis:deployment:analysis-iomp-d-analysis"
+    if(svcName == "") {
+      svcName = pipelineName as String;
+    }
+    alaudaPipeline.appendInfo(STAGE_NAME, [createApp: false, clusterName: "devk8s", namespace: "iomp-d", serviceName: svcName,containerName: containerName as String, image: "${NEW_IMAGE}" as String], '_Deploy')
+}
+}
+}
+
+	}
+}

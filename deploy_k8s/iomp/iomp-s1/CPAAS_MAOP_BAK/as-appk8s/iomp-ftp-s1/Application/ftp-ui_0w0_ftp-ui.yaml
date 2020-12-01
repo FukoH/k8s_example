@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "1"
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: ftp-ui.iomp-ftp-s1
+        cpaasAutoDeploy: "10"
+    name: ftp-ui-ftp-ui
+    namespace: iomp-ftp-s1
+spec:
+    replicas: 0
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-ftp-ui-ftp-ui
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00297
+            labels:
+                app: deployment-ftp-ui-ftp-ui
+                app.cpaas.io/name: ftp-ui.iomp-ftp-s1
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-ftp-ui-ftp-ui
+                version: v1
+        spec:
+            containers:
+                - image: harbor.ms.io/iomp-s1/ftp-ui:20201104_01
+                  imagePullPolicy: IfNotPresent
+                  name: ftp-ui
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: ftp-ui.iomp-ftp-s1
+        cpaasAutoDeploy: "10"
+    name: ftp-ui-ftp-ui
+    namespace: iomp-ftp-s1
+spec:
+    ports:
+        - name: tcp-8081-8081
+          port: 8081
+          protocol: TCP
+          targetPort: 8081
+        - name: tcp-9913-9913
+          port: 9913
+          protocol: TCP
+          targetPort: 9913
+    selector:
+        service.cpaas.io/name: deployment-ftp-ui-ftp-ui
+    sessionAffinity: None
+    type: ClusterIP

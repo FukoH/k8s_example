@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "0"
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: zipkin.iomp-t
+        cpaasAutoDeploy: "10"
+    name: zipkin-zipkin
+    namespace: iomp-t
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-zipkin-zipkin
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00395
+            labels:
+                app: deployment-zipkin-zipkin
+                app.cpaas.io/name: zipkin.iomp-t
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-zipkin-zipkin
+                version: v1
+        spec:
+            containers:
+                - image: harbor.td.io/iomp-t/zipkin:20200902_01
+                  imagePullPolicy: IfNotPresent
+                  name: zipkin
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                - env:
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: register-c1-t-consul register-c2-t-consul register-c3-t-consul
+                  image: harbor.td.io/common-t/t-consul:20200721_01
+                  imagePullPolicy: IfNotPresent
+                  name: t-consul
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 1Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30

@@ -1,0 +1,123 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "0"
+        cpaas.io/creator: k00395
+    labels:
+        BUILD_ID: "7"
+        JOB_BASE_NAME: iomp-poincenter-deploy-test
+        app.cpaas.io/name: poin-manage-center.iomp-p
+        cpaasAutoDeploy: "10"
+    name: poin-manage-center-iomp-p-poincenter
+    namespace: iomp-p
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-poin-manage-center-iomp-p-poincenter
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00395
+            labels:
+                BUILD_ID: "7"
+                JOB_BASE_NAME: iomp-poincenter-deploy-test
+                app: deployment-poin-manage-center-iomp-p-poincenter
+                app.cpaas.io/name: poin-manage-center.iomp-p
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-poin-manage-center-iomp-p-poincenter
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                    - name: ACTIVE_PROFILES
+                      value: p
+                  image: harbor.mp.io/iomp-p/p-iomp-poincenter:20201116_01
+                  imagePullPolicy: Always
+                  livenessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /poin/health
+                        port: 8033
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  name: iomp-p-poincenter
+                  readinessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /poin/health
+                        port: 8033
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 4G
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                - env:
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: register-c1-p-consul-0.register-c1-p-consul.iomp-p.svc.appk8s.acp.ap.io register-c2-p-consul-0.register-c2-p-consul.iomp-p.svc.appk8s.acp.ap.io register-c3-p-consul-0.register-c3-p-consul.iomp-p.svc.appk8s.acp.ap.io
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                    - name: MY_POD_NAME
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: metadata.name
+                    - name: CONSUL_DATACENTER_SET
+                      value: as|as-dc=register-c1-p-consul-0.register-c1-p-consul.iomp-p.svc.appk8s.acp.ap.io;bs|bs-dc=register-c1-p-consul-0.register-c1-p-consul.iomp-p.svc.appk8s.acp.bp.io
+                  image: harbor.mp.io/common-p/p-consul:20200831_01
+                  imagePullPolicy: IfNotPresent
+                  livenessProbe:
+                    failureThreshold: 5
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    tcpSocket:
+                        port: 8301
+                    timeoutSeconds: 30
+                  name: p-consul
+                  readinessProbe:
+                    failureThreshold: 5
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    tcpSocket:
+                        port: 8301
+                    timeoutSeconds: 30
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 1G
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+                - name: dockercfg--iomp--iomp-harbor-devops-copy
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30

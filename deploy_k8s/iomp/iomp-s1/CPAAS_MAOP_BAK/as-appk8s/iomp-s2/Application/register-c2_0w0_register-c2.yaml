@@ -1,0 +1,120 @@
+apiVersion: v1
+kind: Service
+metadata:
+    annotations:
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: register-c2.iomp-s2
+        cpaasAutoDeploy: "10"
+    name: register-c2-s2-consul
+    namespace: iomp-s2
+spec:
+    clusterIP: None
+    ports:
+        - name: tcp-8500-8500
+          port: 8500
+          protocol: TCP
+          targetPort: 8500
+        - name: tcp-8501-8501
+          port: 8501
+          protocol: TCP
+          targetPort: 8501
+        - name: tcp-8502-8502
+          port: 8502
+          protocol: TCP
+          targetPort: 8502
+        - name: tcp-8300-8300
+          port: 8300
+          protocol: TCP
+          targetPort: 8300
+        - name: tcp-8301-8301
+          port: 8301
+          protocol: TCP
+          targetPort: 8301
+        - name: tcp-8302-8302
+          port: 8302
+          protocol: TCP
+          targetPort: 8302
+        - name: tcp-8600-8600
+          port: 8600
+          protocol: TCP
+          targetPort: 8600
+    selector:
+        service.cpaas.io/name: statefulset-register-c2-s2-consul
+    sessionAffinity: None
+    type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "0"
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: register-c2.iomp-s2
+        cpaasAutoDeploy: "10"
+    name: register-c2-s2-consul
+    namespace: iomp-s2
+spec:
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: statefulset-register-c2-s2-consul
+    serviceName: register-c2-s2-consul
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00395
+            labels:
+                app: statefulset-register-c2-s2-consul
+                app.cpaas.io/name: register-c2.iomp-s2
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: statefulset-register-c2-s2-consul
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: CONSUL_START_MODEL
+                      value: s
+                    - name: CONSUL_DATACENTER_SET
+                      value: as|as-dc=register-c1-s2-consul-0.register-c1-s2-consul.iomp-s2.svc.appk8s.acp.as.io;bs|bs-dc=register-c1-s2-consul-0.register-c1-s2-consul.iomp-s2.svc.appk8s.acp.bs.io
+                    - name: CONSUL_AGENT_OPTION
+                      value: -retry-join-wan=register-c1-s2-consul-0.register-c1-s2-consul.iomp-s2.svc.appk8s.acp.as.io -retry-join-wan=register-c3-s2-consul-0.register-c3-s2-consul.iomp-s2.svc.appk8s.acp.as.io
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                  image: harbor.ms.io/common-s2/s2-consul:20200831_01
+                  imagePullPolicy: IfNotPresent
+                  name: s2-consul
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                    - mountPath: /consul/datacenter
+                      name: consul-volume
+                      subPath: as-c2-datadir
+                    - mountPath: /consul/log
+                      name: consul-volume
+                      subPath: as-c2-log
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+                - name: consul-volume
+                  persistentVolumeClaim:
+                    claimName: consul-s2ev
+    updateStrategy:
+        rollingUpdate:
+            partition: 0
+        type: RollingUpdate

@@ -1,0 +1,89 @@
+pipeline{
+
+	
+
+	agent {label "tools"}
+	environment{
+			ALAUDA_PROJECT = "iomp"
+	}
+    options{
+        buildDiscarder(logRotator(numToKeepStr: '200'))
+	}
+
+	stages{
+		stage("alaudaSyncImage"){
+
+	
+	steps{
+		script{
+    container('tools'){
+        def Image = "harbor.td.io/iomp-t/iomp-t-analysis:${imageTag}"
+        def sync_image = Image as String
+        def sourceCredentials = "iomp/iomp-harbor-sync"
+        def TargetImage = "harbor.td.io/iomp-p/p-iomp-analysis:${imageTag}"
+        def sync_target = TargetImage as String
+        def targetCredentials = "iomp/iomp-harbor-sync"
+        try{
+          def realCredentialId = sourceCredentials.replaceAll("/","-")
+          withCredentials([usernamePassword(credentialsId: realCredentialId, usernameVariable: "USERNAME", passwordVariable: "PASSWORD")]){
+              sh "docker login ${Image} -u ${USERNAME} -p ${PASSWORD}"
+          }
+        }
+        catch(err){
+            echo err.getMessage()
+            alaudaDevops.withCluster() {
+                def secretNamespace = sourceCredentials.substring(0,sourceCredentials.lastIndexOf("/"))
+                def secretName = sourceCredentials.substring(sourceCredentials.lastIndexOf("/")+1)
+                def secret = alaudaDevops.selector( "secret/${secretName}" )
+                alaudaDevops.withProject( "${secretNamespace}" ) {
+                    def secretjson = secret.object().data['.dockerconfigjson']
+                    def dockerconfigjson = base64Decode("${secretjson}");
+                    writeFile file: 'config.json', text: dockerconfigjson
+                    sh """
+                      set +x
+                      mkdir -p ~/.docker
+                      mv -f config.json ~/.docker/config.json
+                    """
+                    }
+                }
+            }
+        retry(2){
+            sh "docker pull ${Image}"
+        }
+        sh "docker tag ${Image} ${TargetImage}"
+
+        try{
+            def realCredentialId = targetCredentials.replaceAll("/","-")
+            withCredentials([usernamePassword(credentialsId: realCredentialId, usernameVariable: "TARGETUSERNAME", passwordVariable: "TARGETPASSWORD")]){
+                sh "docker login ${TargetImage} -u ${TARGETUSERNAME} -p ${TARGETPASSWORD}"
+              }
+          }
+        catch(err){
+            echo err.getMessage()
+            alaudaDevops.withCluster() {
+                def secretNamespace = targetCredentials.substring(0,targetCredentials.lastIndexOf("/"))
+                def secretName = targetCredentials.substring(targetCredentials.lastIndexOf("/")+1)
+                def secret = alaudaDevops.selector( "secret/${secretName}" )
+                alaudaDevops.withProject( "${secretNamespace}" ) {
+                    def secretjson = secret.object().data['.dockerconfigjson']
+                    def dockerconfigjson = base64Decode("${secretjson}");
+                    writeFile file: 'config.json', text: dockerconfigjson
+                    sh """
+                      set +x
+                      mkdir -p ~/.docker
+                      mv -f config.json ~/.docker/config.json
+                    """
+                    }
+                }
+          }
+        retry(2){
+            sh "docker push ${TargetImage}"
+        }
+        alaudaPipeline.appendInfo(STAGE_NAME, [source_image: sync_image, target_image: sync_target], '_Sync') 
+    }
+}
+}
+}
+
+	}
+}

@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    annotations:
+        cpaas.io/creator: k00395
+    labels:
+        app.cpaas.io/name: register-c3.iomp-d
+        cpaasAutoDeploy: "10"
+    name: register-c3-d-consul
+    namespace: iomp-d
+spec:
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: statefulset-register-c3-d-consul
+    serviceName: register-c3-d-consul
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00395
+            labels:
+                app: statefulset-register-c3-d-consul
+                app.cpaas.io/name: register-c3.iomp-d
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: statefulset-register-c3-d-consul
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: CONSUL_START_MODEL
+                      value: s
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: register-c1-d-consul register-c2-d-consul
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                  image: harbor.td.io/common-d/d-consul:20200721_01
+                  imagePullPolicy: IfNotPresent
+                  name: d-consul
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                    - mountPath: /consul/datacenter
+                      name: consul-volume
+                      subPath: c3-datadir
+                    - mountPath: /consul/log
+                      name: consul-volume
+                      subPath: c3-log
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+                - name: consul-volume
+                  persistentVolumeClaim:
+                    claimName: consul-dev
+    updateStrategy:
+        rollingUpdate:
+            partition: 0
+        type: RollingUpdate

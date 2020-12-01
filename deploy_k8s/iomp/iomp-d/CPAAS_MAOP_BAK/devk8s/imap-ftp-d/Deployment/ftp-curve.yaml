@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "1"
+        cpaas.io/creator: k00297
+        cpaas.io/display-name: ftp-curve
+    labels:
+        cpaasAutoDeploy: "10"
+    name: ftp-curve
+    namespace: iomp-ftp-d
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-ftp-curve
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00297
+            labels:
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-ftp-curve
+        spec:
+            containers:
+                - env:
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                  image: harbor.td.io/iomp-d/ftp-curve:20200905_05
+                  imagePullPolicy: IfNotPresent
+                  livenessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /health/check
+                        port: 80
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  name: ftp-curve
+                  readinessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /health/check
+                        port: 80
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 2Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                    - mountPath: /opt/tsf/app_config
+                      name: curve-application-volume
+                      subPath: application.properties
+                - env:
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: register-c1-d-consul register-c2-d-consul register-c3-d-consul
+                  image: harbor.td.io/common-d/d-consul:20200721_01
+                  imagePullPolicy: IfNotPresent
+                  name: d-consul
+                  resources:
+                    limits:
+                        cpu: "1"
+                        memory: 512Mi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+                - configMap:
+                    defaultMode: 420
+                    name: curve-application
+                  name: curve-application-volume

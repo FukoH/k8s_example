@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    annotations:
+        app.cpaas.io/last-replicas: "1"
+        cpaas.io/creator: k00297
+    labels:
+        app.cpaas.io/name: ftp-curve.iomp-ftp-s1
+        cpaasAutoDeploy: "10"
+    name: ftp-curve-ftp-curve
+    namespace: iomp-ftp-s1
+spec:
+    replicas: 0
+    selector:
+        matchLabels:
+            project.cpaas.io/name: iomp
+            service.cpaas.io/name: deployment-ftp-curve-ftp-curve
+    strategy:
+        rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+        type: RollingUpdate
+    template:
+        metadata:
+            annotations:
+                cpaas.io/creator: k00297
+            labels:
+                app: deployment-ftp-curve-ftp-curve
+                app.cpaas.io/name: ftp-curve.iomp-ftp-s1
+                project.cpaas.io/name: iomp
+                service.cpaas.io/name: deployment-ftp-curve-ftp-curve
+                version: v1
+        spec:
+            containers:
+                - env:
+                    - name: MY_POD_IP
+                      valueFrom:
+                        fieldRef:
+                            apiVersion: v1
+                            fieldPath: status.podIP
+                  image: harbor.ms.io/iomp-s1/ftp-curve:20201105_01
+                  imagePullPolicy: IfNotPresent
+                  livenessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /health/check
+                        port: 18092
+                        scheme: HTTP
+                    initialDelaySeconds: 600
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  name: ftp-curve
+                  readinessProbe:
+                    failureThreshold: 5
+                    httpGet:
+                        path: /health/check
+                        port: 18092
+                        scheme: HTTP
+                    initialDelaySeconds: 300
+                    periodSeconds: 60
+                    successThreshold: 1
+                    timeoutSeconds: 30
+                  resources:
+                    limits:
+                        cpu: "2"
+                        memory: 4Gi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+                  volumeMounts:
+                    - mountPath: /opt/tsf/app_config/application.properties
+                      name: curve-volume
+                      subPath: application.properties
+                    - mountPath: /ftp/ftp/jarweb/wlslogs/
+                      name: file-volume
+                      subPath: ftp/ftp/jarweb/wlslogs/curve
+                - env:
+                    - name: CONSUL_RETRY_JOIN_ADDR
+                      value: as-register-c1-s1-consul as-register-c2-s1-consul as-register-c3-s1-consul
+                  image: harbor.ms.io/common-s1/s1-consul:20200831_01
+                  imagePullPolicy: IfNotPresent
+                  name: s1-consul
+                  resources:
+                    limits:
+                        cpu: 512m
+                        memory: 512Mi
+                  terminationMessagePath: /dev/termination-log
+                  terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            imagePullSecrets:
+                - name: dockercfg--iomp--iomp-harbor
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+                - configMap:
+                    defaultMode: 420
+                    name: curve-application
+                  name: curve-volume
+                - name: file-volume
+                  persistentVolumeClaim:
+                    claimName: iomp-ftp-s1-file-pv

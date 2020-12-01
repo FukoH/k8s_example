@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    annotations:
+        cpaas.io/creator: k00395
+        kubernetes.io/ingress.class: ""
+        ncp/internal_ip_for_policy: 100.64.177.253
+        ncp/use-regex: "true"
+    labels:
+        cpaasAutoDeploy: "10"
+    name: iomp-ingress
+    namespace: iomp-s2
+spec:
+    rules:
+        - host: iomp.ms2.io
+          http:
+            paths:
+                - backend:
+                    serviceName: nginx-test-nginx
+                    servicePort: 8081
+                  path: /.*

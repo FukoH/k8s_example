@@ -1,0 +1,720 @@
+{
+    "actions": [
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/PersistentVolumeClaim/consul-dev.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/PersistentVolumeClaim/file-volume.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Secret/default-token-7wt68.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Secret/dockercfg--iomp--iomp-harbor.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Secret/dockercfg--iomp--iomp-harbor-devops-copy.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/analysis-iomp-d-analysis.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/gauss-dev.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/iomp-d-poincenter.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/mysql-production.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/nginx-test-nginx.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/poin-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/poin-gateway-lb.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/process-iomp-process.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/register-c1-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/register-c2-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/register-c3-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/rule-pa-rule-d.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Service/zipkin.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Ingress/iomp-demo.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/analysis_0w0_analysis.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/gauss-dev_0w0_gauss-dev.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/mysql-production_0w0_mysql-production.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/nginx_0w0_nginx.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/poin-gateway_0w0_poin-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/poin-manage-center_0w0_管理台.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/process_0w0_process.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/register-c1_0w0_register-c1.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/register-c2_0w0_register-c2.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/register-c3_0w0_register-c3.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/rule_0w0_rule.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Application/zipkin_0w0_zipkin.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/analysis-iomp-d-analysis.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/nginx-test-nginx.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/poin-gateway-iomp-d-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/poin-manage-center-iomp-d-poincenter.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/process-iomp-process.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/rule-pa-rule-d.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/Deployment/zipkin-zipkin.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/StatefulSet/register-c1-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/StatefulSet/register-c2-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-d/StatefulSet/register-c3-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/PersistentVolumeClaim/iomp-ftp-d-consul-pvc.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/ConfigMap/app-application.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/ConfigMap/app-bootstrap.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/ConfigMap/curve-application.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/ConfigMap/ftpcloud-applicaiton.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/ConfigMap/gateway-application.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/ConfigMap/prediction-application.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Secret/default-token-cmbjj.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Secret/dockercfg--iomp--iomp-harbor.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Service/ftp-gateway-lb.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Service/ftp-ui-ftp-ui.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Service/poin-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Service/register-c1-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Service/register-c2-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Service/register-c3-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Ingress/ftp-ui-ftp-ui.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/ftp-app_0w0_ftp-app.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/ftp-cloud_0w0_ftp-cloud.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/ftp-curve_0w0_ftp-curve.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/ftp-gateway_0w0_ftp-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/ftp-prediction_0w0_ftp-prediction.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/ftp-ui_0w0_ftp-ui.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/register-c1_0w0_register-c1.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/register-c2_0w0_register-c2.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Application/register-c3_0w0_register-c3.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-app-ftp-app.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-cloud-ftp-cloud.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-curve.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-curve-ftp-curve.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-gateway-ftp-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-prediction-ftp-prediction.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/Deployment/ftp-ui-ftp-ui.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/StatefulSet/register-c1-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/StatefulSet/register-c2-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-d/StatefulSet/register-c3-d-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-test/Secret/default-token-n9l25.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-ftp-test/Secret/dockercfg--iomp--iomp-harbor.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/PersistentVolumeClaim/consul-tev.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/PersistentVolumeClaim/file-volume.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Secret/default-token-kkflv.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Secret/dockercfg--iomp--iomp-harbor.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Secret/dockercfg--iomp--iomp-harbor-devops-copy.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/analysis-iomp-t-analysis.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/gauss-dev.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/iomp-t-poincenter.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/mysql-production.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/nginx-test-nginx.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/poin-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/poin-gateway-lb.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/process-iomp-process.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/register-c1-t-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/register-c2-t-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/register-c3-t-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/rule-pa-rule-t.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Service/zipkin.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Ingress/iomp-demo.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/analysis_0w0_analysis.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/gauss-dev_0w0_gauss-dev.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/mysql-production_0w0_mysql-production.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/nginx_0w0_nginx.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/poin-gateway_0w0_poin-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/poin-manage-center_0w0_管理台.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/process_0w0_process.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/register-c1_0w0_register-c1.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/register-c2_0w0_register-c2.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/register-c3_0w0_register-c3.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/rule_0w0_rule.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Application/zipkin_0w0_zipkin.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/analysis-iomp-t-analysis.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/nginx-test-nginx.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/poin-gateway-iomp-t-gateway.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/poin-manage-center-iomp-t-poincenter.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/process-iomp-process.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/rule-pa-rule-t.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/Deployment/zipkin-zipkin.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/StatefulSet/register-c1-t-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/StatefulSet/register-c2-t-consul.yaml"
+        },
+        {
+            "action": "create",
+            "content": "",
+            "encoding": "text",
+            "file_path": "CPAAS_MAOP_BAK/devk8s/iomp-t/StatefulSet/register-c3-t-consul.yaml"
+        }
+    ],
+    "commit_id": "e088e2a82a0eabdc885ca832ea9c52d6df6b8182",
+    "timestamp": "2020-10-28_20:26:09"
+}

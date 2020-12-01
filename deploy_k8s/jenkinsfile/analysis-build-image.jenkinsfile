@@ -1,0 +1,160 @@
+pipeline{
+
+	
+
+	agent {label "java"}
+	environment{
+			ALAUDA_PROJECT = "iomp"
+	}
+    options{
+        buildDiscarder(logRotator(numToKeepStr: '200'))
+	}
+
+	stages{
+		stage("clone"){
+
+	
+	steps{
+		script {
+  def codeRepository = "http://cebcms.cebbank.com:13020/IOMP/IOMP_PACode_Analysis.git"
+  def credential_id = ""
+  env.CODE_REPO = codeRepository
+  try {
+    alaudaDevops.withCluster(){
+      alaudaDevops.withProject(alaudaContext.getNamespace()){
+        def coderepo = alaudaDevops.selector("coderepository", "gitee-td-IOMP-IOMP_PACode_Analysis").object()
+        if(coderepo) {
+          credential_id = coderepo.metadata.annotations.secretNamespace + '-' + coderepo.metadata.annotations.secretName
+        }
+      }
+    }
+  } catch(err) {
+    echo err.getMessage()
+  }
+  if ( credential_id == "") {
+    credential_id = "iomp-mazihui-gitee"
+  }
+
+  env.CREDENTIAL_ID = credential_id
+  def relativeDirectory = "."
+  env.RELATIVE_DIRECTORY = relativeDirectory
+
+  def branchFromInput = "develop"
+
+  if("".equals(branchFromInput)){
+    branchFromInput = "master"
+  }
+
+  env.BRANCH = branchFromInput
+
+  def scmVars = checkout([
+    $class: 'GitSCM',
+    branches: [[name: branchFromInput]],
+    extensions: [[
+      $class: 'SubmoduleOption',
+      recursiveSubmodules: true,
+      parentCredentials: true,
+      reference: '',
+    ],[
+      $class: 'RelativeTargetDirectory',
+      relativeTargetDir: relativeDirectory
+    ]],
+    userRemoteConfigs: [[
+      credentialsId: credential_id,
+      url: codeRepository
+    ]]
+  ])
+
+  env.GIT_COMMIT = scmVars.GIT_COMMIT
+  env.GIT_BRANCH = scmVars.GIT_BRANCH
+  env.GIT_BRANCH_AS_TAG = scmVars.GIT_BRANCH.replaceFirst("origin/","").replaceAll("/","-")
+  alaudaPipeline.appendInfo(STAGE_NAME, [commit_id: scmVars.GIT_COMMIT, branch: scmVars.GIT_BRANCH, repo_url: codeRepository as String], '_Clone')
+
+  
+  env.TIMESTAMP = new Date().format("yyyyMMddHHmmss")
+}
+}
+}
+stage("maven"){
+
+	
+	steps{
+		script {
+try{
+  container('java'){
+    sh """
+      mvn -s "Settings.xml" clean package -Dmaven.test.skip=true
+    """
+  }
+}catch(Exception e){
+    throw e
+}finally{
+}
+
+}
+}
+}
+stage("build-docker"){
+
+	
+	steps{
+		script {
+    def retryCount = 3
+    def repositoryAddr = 'harbor.td.io/iomp-d/iomp-d-analysis'.replace("http://","").replace("https://","")
+    env.IMAGE_REPO = repositoryAddr
+
+    def credentialId = ''
+    credentialId = "iomp-iomp-harbor-registry-credentials"
+    dir(RELATIVE_DIRECTORY) {
+        container('tools'){
+            retry(retryCount) {
+                try{
+                    if (credentialId != '') {
+                      withCredentials([usernamePassword(credentialsId: "${credentialId}", passwordVariable: 'PASSWD', usernameVariable: 'USER')]) {
+                        sh "docker login ${IMAGE_REPO} -u ${USER} -p ${PASSWD}"
+                        }
+                      }
+                    }
+                catch(err){
+                    echo err.getMessage()
+                    alaudaDevops.withCluster() {
+                          def secretNamespace = "iomp"
+                          def secretName = "iomp-harbor-registry-credentials"
+                          def secret = alaudaDevops.selector( "secret/${secretName}" )
+                          alaudaDevops.withProject( "${secretNamespace}" ) {
+                              def secretjson = secret.object().data['.dockerconfigjson']
+                              def dockerconfigjson = base64Decode("${secretjson}");
+                              writeFile file: 'config.json', text: dockerconfigjson
+                              sh """
+                                set +x
+                                mkdir -p ~/.docker
+                                mv -f config.json ~/.docker/config.json
+                              """
+                          }
+                      }
+                }
+                def buildImages = []
+                  def tagswithcomma = "20201116_01"
+                  def tags = tagswithcomma.split(",")
+                  def incubatorimage = "${IMAGE_REPO}:${tags[0]}"
+                  sh " docker build -t ${incubatorimage} -f Dockerfile  ."
+                  tags.each { tag ->
+                    sh """
+                        docker tag ${incubatorimage} ${IMAGE_REPO}:${tag}
+                        docker push ${IMAGE_REPO}:${tag}
+                    """
+                    buildImages.add("${IMAGE_REPO}:${tag}" as String)
+                  }
+                alaudaPipeline.appendInfo(STAGE_NAME, [build_image: buildImages], '_Docker')
+                if (credentialId != '') {
+                    sh "docker logout ${IMAGE_REPO}"
+                }
+            }
+        }
+    }
+}
+}
+}
+
+	}
+}
